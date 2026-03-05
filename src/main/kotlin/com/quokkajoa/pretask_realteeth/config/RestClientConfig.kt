@@ -25,10 +25,15 @@ class RestClientConfig {
         return RestClient.builder()
             .requestFactory(factory)
             .defaultStatusHandler({ it.is4xxClientError }) { _, response ->
-                throw ExternalClientException(response.statusCode.value(), "외부 API 요청 부적절")
+                val errorBody = String(response.body.readAllBytes())
+                val statusCode = response.statusCode.value()
+
+                throw ExternalClientException(statusCode, "외부 API 요청 부적절 - 응답: $errorBody")
             }
             .defaultStatusHandler({ it.is5xxServerError }) { _, response ->
-                throw ExternalServiceException(response.statusCode.value(), "외부 서버 장애 발생")
+                val errorBody = String(response.body.readAllBytes())
+                val statusCode = response.statusCode.value()
+                throw ExternalServiceException(statusCode, "외부 서버 장애 발생 - 응답: $errorBody")
             }
     }
 }
