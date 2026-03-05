@@ -1,0 +1,13 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: assignment-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: assignment_db
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
