@@ -33,6 +33,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("com.h2database:h2")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

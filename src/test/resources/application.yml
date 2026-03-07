@@ -10,5 +10,8 @@ spring:
     show-sql: true
 
 mock-worker:
-  base-url: https://dev.realteeth.ai/mock
+  base-url: http://localhost
   api-key: ${MOCK_WORKER_API_KEY:test_api_key}
+  timeout:
+    connect: 5
+    read: 60

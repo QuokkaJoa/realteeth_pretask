@@ -7,3 +7,6 @@ class ExternalClientException(val statusCode: Int, message: String)
 
 class ExternalServiceException(val statusCode: Int, message: String)
     : ExternalException("[$statusCode] $message")
+
+class ExternalRateLimitException(val statusCode: Int, message: String)
+    : ExternalException("[$statusCode] $message")

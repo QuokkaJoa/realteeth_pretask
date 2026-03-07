@@ -36,6 +36,7 @@ class MockWorkerClient(
         return client.get()
             .uri("/process/{job_id}", workerJobId)
             .header("X-API-KEY", apiKey)
+            .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .body<ProcessStatusResponse>()
             ?: throw ExternalServiceException(500, "Mock Worker 상태 조회 응답이 비어있습니다. JobId: $workerJobId")
