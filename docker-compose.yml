@@ -7,6 +7,8 @@ services:
     environment:
       MYSQL_DATABASE: assignment_db
       MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
@@ -21,7 +23,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/assignment_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-      MOCK_WORKER_API_KEY: ${MOCK_WORKER_API_KEY:-myApiKey}
+      MOCK_WORKER_API_KEY: ${MOCK_WORKER_API_KEY}
     depends_on:
       mysql:
         condition: service_healthy
+
+volumes:
+  mysql_data:
