@@ -2,17 +2,16 @@ spring:
   application:
     name: pre-task_realteath
   datasource:
-    url: jdbc:mysql://localhost:3306/assignment_db?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/assignment_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+  jackson:
+    deserialization:
+      read-unknown-enum-values-using-default-value: true
 
 mock-worker:
   api-key: ${MOCK_WORKER_API_KEY:myApiKey}
