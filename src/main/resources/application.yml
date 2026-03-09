@@ -16,3 +16,11 @@ spring:
 mock-worker:
   api-key: ${MOCK_WORKER_API_KEY:myApiKey}
   base-url: https://dev.realteeth.ai/mock
+
+job:
+  scheduler:
+    dispatch-delay-ms: 1000
+    poll-delay-ms: 30000
+    timeout-check-delay-ms: 60000
+    chunk-size: 100
+    timeout-minutes: 30

@@ -84,7 +84,7 @@ class Job(
         this.status = JobStatus.FAILED
     }
 
-    fun isTimeout(timeoutMinutes: Long = 10): Boolean {
+    fun isTimeout(timeoutMinutes: Long = 30): Boolean {
         return status == JobStatus.PROCESSING &&
                 updatedAt.isBefore(LocalDateTime.now().minusMinutes(timeoutMinutes))
     }

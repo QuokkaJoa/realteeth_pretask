@@ -1,13 +1,13 @@
 package com.quokkajoa.pretask_realteeth.scheduler
 
 import com.quokkajoa.pretask_realteeth.component.MockWorkerClient
-import com.quokkajoa.pretask_realteeth.domain.Job
 import com.quokkajoa.pretask_realteeth.domain.JobStatus
 import com.quokkajoa.pretask_realteeth.dto.toDomainStatus
 import com.quokkajoa.pretask_realteeth.exception.ExternalClientException
 import com.quokkajoa.pretask_realteeth.exception.ExternalRateLimitException
 import com.quokkajoa.pretask_realteeth.service.JobService
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -15,14 +15,15 @@ import org.springframework.stereotype.Component
 @Component
 class JobScheduler(
     private val mockWorkerClient: MockWorkerClient,
-    private val jobService: JobService
+    private val jobService: JobService,
+    @Value("\${job.scheduler.chunk-size}") private val chunkSize: Int,
+    @Value("\${job.scheduler.timeout-minutes}") private val timeoutMinutes: Long
 ) {
     private val log = LoggerFactory.getLogger(JobScheduler::class.java)
-    private val CHUNK_SIZE = 100
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelayString = "\${job.scheduler.dispatch-delay-ms}")
     fun dispatchPendingJobs() {
-        val pendingJobs = jobService.findPendingJobs(PageRequest.of(0, CHUNK_SIZE))
+        val pendingJobs = jobService.findPendingJobs(PageRequest.of(0, chunkSize))
         if (pendingJobs.isEmpty()) return
 
         log.info("PENDING 작업 {}건 발견. Mock Worker 전송 시작.", pendingJobs.size)
@@ -49,9 +50,9 @@ class JobScheduler(
         }
     }
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelayString = "\${job.scheduler.poll-delay-ms}")
     fun pollProcessingJobs() {
-        val processingJobs = jobService.findProcessingJobs(PageRequest.of(0, CHUNK_SIZE))
+        val processingJobs = jobService.findProcessingJobs(PageRequest.of(0, chunkSize))
         if (processingJobs.isEmpty()) return
 
         log.info("PROCESSING 작업 {}건 발견. 상태 조회 시작.", processingJobs.size)
@@ -92,11 +93,11 @@ class JobScheduler(
         }
     }
 
-    @Scheduled(fixedDelay = 60_000)
+    @Scheduled(fixedDelayString = "\${job.scheduler.timeout-check-delay-ms}")
     fun failTimeoutJobs() {
         val timeoutJobs = jobService.findTimeoutJobs(
-            timeoutMinutes = 10,
-            pageable = PageRequest.of(0, CHUNK_SIZE)
+            timeoutMinutes = timeoutMinutes,
+            pageable = PageRequest.of(0, chunkSize)
         )
         if (timeoutJobs.isEmpty()) return
 
